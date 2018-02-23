@@ -1,0 +1,4 @@
+Pillow
+tensorflow
+numpy
+tqdm
