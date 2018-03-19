@@ -108,7 +108,7 @@ def draw_bboxes(img,boxes,classes):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-c","--checkpoint", default='pbs/080417-12-03-164952.pb', help="Path to saved model")
+    parser.add_argument("-c","--checkpoint", default='pbs/model.pb', help="Path to saved model")
     parser.add_argument("-cs", "--chip_size", default=300, type=int, help="Size in pixels to chip input image")
     parser.add_argument("input", help="Path to test chip")
     parser.add_argument("-o","--output",default="predictions.txt",help="Filepath of desired output")
