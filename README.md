@@ -2,17 +2,21 @@
 
 ### Code
 
-This repository contains the pre-trained xView baseline models (see our [blog post](https://medium.com/@dariusl/object-detection-baselines-in-overhead-imagery-with-diux-xview-c39b1852f24f)) as well as code for inference and scoring.  
+This repository contains the pre-trained xView baseline models (see our [blog post](https://medium.com/@dariusl/object-detection-baselines-in-overhead-imagery-with-diux-xview-c39b1852f24f)) as well as code for inference and scoring.  Class ID to name mappings are in the 'xview_class_labels.txt' file
 
 Inference and scoring code are under the 'inference/' and 'scoring/' folders, respectively.  Inside 'inference/' we provide a python script 'create_detections.py' for exporting detections from a single xView TIF image, given a frozen model.  There is also a script 'create_detections.sh' for exporting detections from multiple xView TIF images.  Exported detections are in format
 
-| xmin	| ymin	| xmax	| ymax	| class_num	| confidence	|
+
+|X min|Y min|X max|Y max|Class ID|Confidence|
+|---|---|---|---|---|---|
+
 
 which is the proper format for submitting to the xView challenge portal.  You can use the given pre-trained baseline models for the '-c' checkpoint parameter.  
 
 The 'scoring/' folder contains code for evaluating a set of predictions (exported from 'create_detections.py' or 'create_detections.sh') given a ground truth label geojson.  The script 'score.py' calculates scores: total mean average precision (mAP), per-class mAP, mAP for small/med/large classes, mAP for rare/common classes, F1 score, mean precision, and mean recall. We use the PASCAL VOC method for computing mean average precision and calculate mean precision and mean recall using the formulas:
 
 Precision = (True Positives) / (True Positives + False Positives)
+
 Recall = (True Positives) / (True Positives + False Negatives)
 
 averaged over all classes and files. Class splits are shown at the bottom of this README.
