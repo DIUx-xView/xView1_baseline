@@ -186,10 +186,7 @@ def score(path_predictions, path_groundtruth, path_output, iou_threshold = .5):
 
             if np.any(arr[:,:4] < 0):
               raise ValueError('Bounding boxes cannot be negative.')
-
-            if np.any(arr[:,5] < 0) or np.any(arr[:,5] > 1):
-              raise ValueError('Confidence scores should be between 0 and 1.')
-
+              
             boxes_dict[fname] = arr[:,:6]
  
   pchips = sorted(pchips)
