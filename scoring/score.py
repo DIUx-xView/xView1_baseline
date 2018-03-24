@@ -173,14 +173,24 @@ def score(path_predictions, path_groundtruth, path_output, iou_threshold = .5):
 
       with open(path_predictions + file,'r') as f:
         arr = np.array(list(csv.reader(f,delimiter=" ")))
-        arr = arr[:,:6].astype(np.float64)
-        threshold = 0
-        arr = arr[arr[:,5] > threshold]
-        stclasses += list(arr[:,4])
-        num_preds += arr.shape[0]
-        if np.any(arr[:,:4] < 0):
-          raise ValueError('Bounding boxes cannot be negative.')
-        boxes_dict[fname] = arr[:,:6]
+        if arr.shape[0] == 0:
+            #If the file is empty, we fill it in with an array of zeros
+            boxes_dict[fname] = np.array([[0,0,0,0,0,0]])
+            num_preds += 1
+        else:
+            arr = arr[:,:6].astype(np.float64)
+            threshold = 0
+            arr = arr[arr[:,5] > threshold]
+            stclasses += list(arr[:,4])
+            num_preds += arr.shape[0]
+
+            if np.any(arr[:,:4] < 0):
+              raise ValueError('Bounding boxes cannot be negative.')
+
+            if np.any(arr[:,5] < 0) or np.any(arr[:,5] > 1):
+              raise ValueError('Confidence scores should be between 0 and 1.')
+
+            boxes_dict[fname] = arr[:,:6]
  
   pchips = sorted(pchips)
   stclasses = np.unique(stclasses).astype(np.int64)
