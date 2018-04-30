@@ -186,7 +186,10 @@ def score(path_predictions, path_groundtruth, path_output, iou_threshold = .5):
 
             if np.any(arr[:,:4] < 0):
               raise ValueError('Bounding boxes cannot be negative.')
-              
+
+            if np.any(arr[:,5] < 0) or np.any(arr[:,5] > 1):
+              raise ValueError('Confidence scores should be between 0 and 1.')
+
             boxes_dict[fname] = arr[:,:6]
  
   pchips = sorted(pchips)
@@ -219,10 +222,15 @@ def score(path_predictions, path_groundtruth, path_output, iou_threshold = .5):
 
       gt_box = gt_coords[(gt_chips==pchips[file_ind]).flatten()]
       gt_cls = gt_classes[(gt_chips==pchips[file_ind])]
-
+      
       for i in gt_unique:
+        s = det_scores[det_cls == i]
+        ssort = np.argsort(s)[::-1]
+        per_file_class_data[i][0] += s[ssort].tolist()
+
         gt_box_i_cls = gt_box[gt_cls == i].flatten().tolist()
-        det_box_i_cls = det_box[det_cls == i].flatten().tolist()
+        det_box_i_cls = det_box[det_cls == i]
+        det_box_i_cls = det_box_i_cls[ssort].flatten().tolist()
 
         gt_rects = convert_to_rectangle_list(gt_box_i_cls)
         rects = convert_to_rectangle_list(det_box_i_cls)
@@ -231,7 +239,7 @@ def score(path_predictions, path_groundtruth, path_output, iou_threshold = .5):
         rects_matched, gt_matched = matching.greedy_match(iou_threshold)
 
         #we aggregate confidence scores, rectangles, and num_gt across classes 
-        per_file_class_data[i][0] += det_scores[det_cls == i].tolist()
+        #per_file_class_data[i][0] += det_scores[det_cls == i].tolist()
         per_file_class_data[i][1] += rects_matched
         num_gt_per_cls[i] += len(gt_matched)
 
