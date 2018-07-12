@@ -247,7 +247,16 @@ def score(path_predictions, path_groundtruth, path_output, iou_threshold = .5):
   per_class_p = np.ones(max_gt_cls) * float('nan')
   per_class_r = np.ones(max_gt_cls) * float('nan')
 
-  for i in gt_unique:
+  xview_categories_all = [
+    11, 12, 13, 15, 17, 18, 19, 20, 21, 23, 24, 25, 26, 27, 28, 29, 32, 33, 34, 35, 36, 37, 38, 40, 41, 42, 44, 45, 47, 49, 50, 51, 52, 53, 54, 55, 56, 57, 59, 60, 61, 62, 63, 64, 65, 66, 71, 72, 73, 74, 76, 77, 79, 83, 84, 86, 89, 91, 93, 94,
+    ]
+
+  # there are 3 extra classes in gt_unique which should not be scored in xView datasets: 75, 82, 87
+  # Remove those classes if they are present
+  ignored_classes = [75, 82, 87]
+  gt_unique_xv = np.array([i for i in gt_unique if int(i) not in ignored_classes], dtype = np.int64)
+
+  for i in gt_unique_xv:
     scores = np.array(per_file_class_data[i][0])
     rects_matched = np.array(per_file_class_data[i][1])
 
@@ -261,7 +270,8 @@ def score(path_predictions, path_groundtruth, path_output, iou_threshold = .5):
       per_class_r[i] = np.sum(rects_matched) / num_gt_per_cls[i]
       ap = ap_from_pr(precision,recall)
     else:
-      ap = float('nan')
+      # ap = float('nan')
+      ap = 0.0 # So that predicting 'NaN' for a whole category doesn't artificially boost scores
     average_precision_per_class[i] = ap
 
   #metric splits
